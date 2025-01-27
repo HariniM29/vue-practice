@@ -1,0 +1,134 @@
+<template>
+  <!-- Table -->
+  <div class="card-body py-0 px-4 mb-1">
+    <div class="upper-table mt-1">
+      <v-simple-table
+        fixed-header
+        class="table-height stickyTable"
+        height="calc(100vh - 246px)"
+      >
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-left">Event</th>
+              <th class="text-center">Status</th>
+              <th class="text-left">Severity</th>
+              <th class="text-center">Users</th>
+              <th class="text-center">Assigned To</th>
+              <th class="text-center">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="event in events" :key="event.id">
+              <td class="text-left">
+                <router-link
+                  :to="{ name: 'BugDetails', params: { id: event.id } }"
+                  class="event-link"
+                >
+                  <span class="event">{{ event.event }}</span>
+                </router-link>
+                <span class="component">in {{ event.component }}</span>
+                <span class="stack">{{ event.stack }}</span>
+              </td>
+              <td class="text-center status">
+                {{ event.status }}
+              </td>
+              <td class="text-left">
+                <span :class="getSeverityClass(event.severity)"></span>
+                {{ event.severity }}
+              </td>
+              <td class="text-center">{{ event.users }}</td>
+              <td class="text-center">{{ event.assignedTo }}</td>
+              <td class="text-right">{{ new Date(event.timestamp).toLocaleString() }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </div>
+  </div>
+</template>
+
+
+<script>
+import { mapActions, mapGetters } from "vuex";
+
+export default {
+  name: "BugTable",
+
+  computed: {
+    ...mapGetters("bugs", ["allEvents"]),
+    events() {
+      return this.allEvents;
+    },
+  },
+  mounted() {
+    this.fetchEvents();
+  },
+  methods: {
+    ...mapActions("bugs", ["fetchEvents"]),
+    getSeverityClass(severity) {
+      switch (severity.toLowerCase()) {
+        case "error":
+          return "status-error";
+        case "warning":
+          return "status-warning";
+        case "info":
+          return "status-info";
+        default:
+          return "";
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.event {
+  color: #1c67b3;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.component {
+  display: block;
+  font-size: 0.7rem;
+}
+.stack {
+  display: block;
+  font-size: 0.9rem;
+  color: #726d6d;
+  font-style: italic;
+}
+td {
+  padding: 0.5rem !important;
+}
+.status-error {
+  box-shadow: 0 1px 2px 0 #e42828 !important;
+  background: linear-gradient(90deg, #e42828 35%, #e46969 100%);
+  border-color: red;
+  padding: 6px;
+  background-color: #e42828;
+  margin-right: 0.5rem !important;
+  display: inline-block;
+  border-radius: 50%;
+}
+.status-warning {
+  box-shadow: 0 1px 2px 0 #ecae3b !important;
+  background: linear-gradient(90deg, #ecae3b 35%, #ecb95c 100%);
+  border-color: #ecae3b;
+  padding: 6px;
+  background-color: #ecae3b;
+  margin-right: 0.5rem !important;
+  display: inline-block;
+  border-radius: 50%;
+}
+.status-info {
+  box-shadow: 0 1px 2px 0 #1976d2 !important;
+  background: linear-gradient(90deg, #1976d2 35%, #65a0da 100%);
+  border-color: #1976d2;
+  padding: 6px;
+  background-color: #1976d2;
+  margin-right: 0.5rem !important;
+  display: inline-block;
+  border-radius: 50%;
+}
+</style>
