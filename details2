@@ -1,0 +1,517 @@
+<template>
+    <div class="details-container">
+    <div class="event-details">
+      
+      <div v-if="event">
+        <div class="section-1">
+            <div>
+                <div class="event-name"><p>{{ event.event }}</p></div>
+                <div class="event-stack"><p>{{ event.stack }}</p></div>
+            </div>
+            <div class="info-count">
+                <div class="users">
+                   <p class="users-title">Users</p>
+                    <p class="users-value">{{ event.users }}</p>
+                </div>
+                <div>
+                    <p class="assigned-to-title">Assigned To</p>
+                    <p class="assigned-to-value">{{ event.assignedTo }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- <div class="section-2">
+            <div>
+                <div class="component">
+                    <p class="component-title">Error occured in component </p>
+                    <p class="component-value">{{ event.component }}</p>
+                </div>
+                <div class="url">
+                    <p class="url-title">URL</p>
+                    <p class="url-value">{{ event.url }}</p>
+                </div>
+            </div>
+            <div class="info-count">
+                <div class="severity">
+                    <div class="severity-title"><p>Severity</p></div>
+                    <div class="severity-value">
+                        <span  :class="getSeverityClass(event.severity)"></span>{{ event.severity }}</div>
+                </div>
+                
+            
+                
+            </div>
+        </div> -->
+        <div style="padding:0.5rem">
+        <hr>
+        <!-- <div class="section-3">
+            
+            <div>{{ event.device }}</div>
+            <div>{{ event.browser }}</div>
+            <div>{{ event.os }}</div>
+          
+        </div> -->
+        <div class="section-3">
+        <div class="evnironment">
+            <img src="../../assets/device.svg" style="width: 4rem;" class="environment-image">
+            <p class="environment-value"> {{ event.device }}</p>
+        </div>
+        <div  class="evnironment">
+        <img :src="getBrowserIcon(event.browser)" alt="Browser Icon" style="    width: 5rem;
+    height: 4rem;" class="environment-image">
+        <p class="environment-value">{{ event.browser }}</p>
+        </div>
+        <div  class="evnironment">
+        <img :src="getOsIcon(event.os)" alt="Browser Icon" style="    width: 5rem;
+    height: 4rem;" class="environment-image" >
+           <p class="environment-value"> {{ event.os }}</p>
+        </div>
+        </div>
+
+        <hr>
+    </div>
+
+
+    <!--tags-->
+
+    <div style="display: flex;justify-content: space-between;">
+        <div >
+            <p class="tags-title">Tags</p>
+        <div style="display: flex;gap:2rem;">
+            
+        <div  class="tag">
+            <div class="title">Browser</div>
+            <div  class="value">{{ event.browser }}</div>
+        </div>
+        <div  class="tag">
+            <div  class="title">Device</div>
+            <div class="value">{{ event.device }}</div>
+        </div>
+        <div  class="tag">
+            <div  class="title">Timestamp</div>
+            <div class="value">{{ new Date(event.timestamp).toLocaleString() }}</div>
+        </div>
+    </div>
+        <div class="tag-section">
+        <div  class="tag">
+            <div class="title">OS</div>
+            <div class="value">{{ event.os }}</div>
+        </div>
+        <div  class="tag">
+            <div class="title">Severity</div>
+            <div class="value">{{ event.severity }}</div>
+        </div>
+    </div>
+
+
+        <div  class="tag" style="margin-top: 1rem;">
+            <div class="title">Url</div>
+            <div class="value">{{ event.url }}</div>
+        </div>
+    </div>
+
+    <div  class="severity-status-container">
+        <div class="severity">
+                    <div class="severity-title"><p>Severity</p></div>
+                    <div class="severity-value">
+                        <span  :class="getSeverityClass(event.severity)"></span>{{ event.severity }}</div>
+        </div>
+                <div class="status">
+            <div class="status-title"><p>Status</p></div>
+            <div class="status-value">
+          <img :src="getStatus(event.status)"> <span :class="getStatusClass(event.status)">{{ event.status }}</span>
+            </div>
+        </div>
+    </div>
+
+    </div>
+        
+
+
+        <div style="margin-top:1rem">
+            <div>
+                <div class="extra-info-title"><p>Extra Info</p></div>
+                <p class="extra-info-value">{{ event.extraInfo }}</p>
+            </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+  </template>
+  
+  <script>
+  import { mapGetters } from "vuex";
+  
+
+  export default {
+    name: "BugDetails",
+ 
+    computed: {
+      ...mapGetters("bugs", ["allEvents"]),
+      event() {
+        return this.allEvents.find(
+          (event) => event.id === parseInt(this.$route.params.id, 10)
+        );
+      },
+    },
+    methods:{
+        getSeverityClass(severity) {
+      switch (severity.toLowerCase()) {
+        case "error":
+          return "status-error";
+        case "warning":
+          return "status-warning";
+        case "info":
+          return "status-info";
+        default:
+          return "";
+      }
+    },
+    getBrowserIcon(browser) {
+  switch (browser.toLowerCase()) {
+    case "chrome":
+      return require('@/assets/chrome.svg');
+    case "edge":
+      return require('@/assets/edge.svg'); 
+    case "firefox":
+      return require('@/assets/firefox.svg'); 
+    case "safari":
+      return require('@/assets/safari.svg'); 
+    
+  }
+},
+
+getStatus(status){
+    switch(status.toLowerCase())
+    {
+        case  "handled":
+            return require('@/assets/handled.svg');
+        case "unhandled":
+            return require('@/assets/unhandled.svg');
+        case "underreview":
+        return require('@/assets/underreview.svg');
+
+    }
+
+},
+
+
+getOsIcon(os) {
+  switch (os.toLowerCase()) {
+    case "windows":
+      return require('@/assets/windows.svg');
+    case "macos":
+      return require('@/assets/mac.svg');
+    default:
+      return require('@/assets/safari.svg'); 
+  }
+},
+getStatusClass(status) {
+    switch (status.toLowerCase()) {
+      case "handled":
+        return "status-handles";
+      case "unhandled":
+        return "status-unhandles";
+      case "underreview":
+        return "status-underreview";
+      default:
+        return "";
+    }
+  },
+
+    }
+  };
+  </script>
+  
+  <style scoped>
+  .event-details {
+    /* padding: 1rem; */
+    padding: 2rem;
+    background: white;
+    border-radius: 11px;
+    height: 86vh;
+    box-shadow: 0 0 2px #90a5ba;
+  }
+  .details-container{
+    padding:3rem;
+  }
+  .section-1{
+    display:flex;
+    justify-content: space-between;
+  }
+  .info-count{
+    display: flex;
+    background: white;
+  }
+  .event-name{
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1c67b3;
+    text-decoration: underline;
+  }
+  .event-stack{
+    font-size: 1.2rem;
+    color: #7e7a7a;
+    font-weight: 600;
+  }
+  .users{
+    margin-right:4rem;
+  }
+  .users-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .users-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    font-size: 1.2rem;
+    display: flex
+;
+    justify-content: center;
+  }
+
+  .assigned-to-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+
+  }
+  .assigned-to-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+  .section-2{
+    display:flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  .component-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .url-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .component-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    margin-left: 3rem;
+    justify-content: center;
+    display: flex
+;
+    align-items: center;
+    font-size: 1.2rem;
+  }
+  .url-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    margin-left: 15.5rem;
+    justify-content: center;
+    display: flex
+;
+    align-items: center;
+    font-size: 1.2rem;
+  }
+  .component{
+    display: flex;
+  }
+  .url{
+    display: flex;
+  }
+
+.severity{
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+  .status-error {
+  box-shadow: 0 1px 2px 0 #e42828 !important;
+  background: linear-gradient(90deg, #e42828 35%, #e46969 100%);
+  border-color: red;
+  padding: 6px;
+  background-color: #e42828;
+  margin-right: 0.5rem !important;
+  display: inline-block;
+  border-radius: 50%;
+}
+.status-warning {
+  box-shadow: 0 1px 2px 0 #ecae3b !important;
+  background: linear-gradient(90deg, #ecae3b 35%, #ecb95c 100%);
+  border-color: #ecae3b;
+  padding: 6px;
+  background-color: #ecae3b;
+  margin-right: 0.5rem !important;
+  display: inline-block;
+  border-radius: 50%;
+}
+.status-info {
+  box-shadow: 0 1px 2px 0 #1976d2 !important;
+  background: linear-gradient(90deg, #1976d2 35%, #65a0da 100%);
+  border-color: #1976d2;
+  padding: 6px;
+  background-color: #1976d2;
+  margin-right: 0.5rem !important;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.status-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+    
+}
+.status-title p{
+    margin-bottom:0px !important;
+}
+.severity-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.status-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left:3rem;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.severity-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    font-size: 1.2rem;
+  
+}
+
+.section-3{
+    display: flex;
+    padding:2rem;
+    justify-content: space-between;
+}
+.status{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.extra-info-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.extra-info-value{
+    color: #7e7a7a;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.evnironment{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.environment-image{
+    margin-right:1rem;
+}
+
+.environment-value{
+    color: #7e7a7a;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top:1rem;
+}
+
+.status img{
+    width:1.5rem;
+}
+.status-handles {
+ color: green;
+
+    display: block;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.status-unhandles {
+
+  color: #dc3545;
+
+    display: block;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.status-underreview {
+
+  color:  #ffc107;
+
+    display: block;
+    justify-content: center;
+    align-items: center;
+
+}
+
+@media (max-width: 1000px) {
+  .section-1, .section-2 {
+    flex-direction: column;
+  }
+}
+
+
+
+.title{
+border-right:1px solid black;
+padding:7px;
+color: #1c67b3;
+}
+
+
+.value{
+    padding:7px; color: #7e7a7a;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+
+.tag{
+display: flex;
+border: 1px solid black; 
+width: fit-content;
+border-radius:3px;
+}
+
+.tags-title{
+    color: #1c67b3;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+
+.tag-section{
+    display: flex;
+    gap:2rem;
+    margin-top: 1rem;
+}
+.severity-status-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+}
+  </style>
+  
